@@ -1,0 +1,23 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine # Using a recent stable and lightweight version of Postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: securesight_db
+    ports:
+      - "5432:5432" # Map container port 5432 to host port 5432
+    volumes:
+      - db_data:/var/lib/postgresql/data # Persist data in a volume
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d securesight_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:

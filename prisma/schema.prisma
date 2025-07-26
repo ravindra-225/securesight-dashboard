@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Camera {
+  id        String     @id @default(uuid()) // Unique identifier for the camera
+  name      String     @unique
+  location  String     // Physical location of the camera (e.g. "Main Entrance")
+  incidents Incident[] // Relation to Incidents (one camera can have many incidents)
+}
+
+// Data Model: Incident
+model Incident {
+  id          String   @id @default(uuid()) // Unique identifier for the incident
+  camerald    String   // Foreign key to Camera model
+  camera      Camera   @relation(fields: [camerald], references: [id]) // Relation to Camera model
+  videoUrl    String?  // URL to a video clip (optional)
+  type        String   // Type of incident (e.g. "Unauthorized Access", "Gun Threat")
+  tsStart     DateTime // Timestamp when the incident started
+  tsEnd       DateTime // Timestamp when the incident ended
+  thumbnailUrl String   // URL to the incident's thumbnail image
+  resolved    Boolean  @default(false) // Whether the incident has been resolved or not 
+  
+  
+  // --- NEW FIELDS for "Mini strip of two additional camera thumbnails" ---
+  additionalThumbnail1Url  String?   // URL for the first additional thumbnail
+  additionalCamera1Name    String?   // Name of the camera associated with additional thumbnail 1
+  additionalThumbnail2Url  String?   // URL for the second additional thumbnail
+  additionalCamera2Name    String?   // Name of the camera associated with additional thumbnail 2
+
+
+
+}
+
